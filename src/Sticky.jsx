@@ -132,10 +132,8 @@ class Sticky extends React.PureComponent {
     updateInitialDimension (options) {
         options = options || {}
 
-        var {outer, inner} = this.refs;
-
-        var outerRect = outer.getBoundingClientRect();
-        var innerRect = inner.getBoundingClientRect();
+        var outerRect = this.outerElement.getBoundingClientRect();
+        var innerRect = this.innerElement.getBoundingClientRect();
 
         var width = outerRect.width || outerRect.right - outerRect.left;
         var height = innerRect.height || innerRect.bottom - innerRect.top;;
@@ -325,7 +323,7 @@ class Sticky extends React.PureComponent {
             winHeight = win.innerHeight || docEl.clientHeight;
             M = window.Modernizr;
             // No Sticky on lower-end browser when no Modernizr
-            if (M && M.prefixed) {
+            if (M) {
                 canEnableTransforms = M.csstransforms3d;
                 TRANSFORM_PROP = M.prefixed('transform');
             }
@@ -386,8 +384,8 @@ class Sticky extends React.PureComponent {
         })
 
         return (
-            <div ref='outer' className={outerClasses} style={outerStyle}>
-                <div ref='inner' className='sticky-inner-wrapper' style={innerStyle}>
+            <div ref={(outer) => { this.outerElement = outer; }} className={outerClasses} style={outerStyle}>
+                <div ref={(inner) => { this.innerElement = inner; }} className='sticky-inner-wrapper' style={innerStyle}>
                     {this.props.children}
                 </div>
             </div>
