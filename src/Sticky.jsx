@@ -6,12 +6,11 @@
 
 'use strict';
 
-import React, {Component} from 'react';
+import React from 'react';
 import PropTypes from 'prop-types'
 
 import {subscribe} from 'subscribe-ui-event';
 import classNames from 'classnames';
-import shallowCompare from 'react-addons-shallow-compare';
 
 // constants
 const STATUS_ORIGINAL = 0; // The default status, locating at the original position.
@@ -30,7 +29,7 @@ var scrollDelta = 0;
 var win;
 var winHeight = -1;
 
-class Sticky extends Component {
+class Sticky extends React.PureComponent {
     constructor (props, context) {
         super(props, context);
         this.handleResize = this.handleResize.bind(this);
@@ -358,14 +357,18 @@ class Sticky extends Component {
     }
 
     shouldComponentUpdate (nextProps, nextState) {
-        return !this.props.shouldFreeze() && shallowCompare(this, nextProps, nextState);
+        return !this.props.shouldFreeze();
     }
 
     render () {
         // TODO, "overflow: auto" prevents collapse, need a good way to get children height
-        var innerStyle = {
+        var innerStyle = (this.props.stickToBottom === false) ? {
             position: this.state.status === STATUS_FIXED ? 'fixed' : 'relative',
             top: this.state.status === STATUS_FIXED ? '0px' : '',
+            zIndex: this.props.innerZ
+        } : {
+            position: this.state.status === STATUS_FIXED ? 'fixed' : 'relative',
+            bottom: this.state.status === STATUS_FIXED ? '0px' : '',
             zIndex: this.props.innerZ
         };
         var outerStyle = {};
@@ -402,7 +405,8 @@ Sticky.defaultProps = {
     enableTransforms: true,
     activeClass: 'active',
     releasedClass: 'released',
-    onStateChange: null
+    onStateChange: null,
+    stickToBottom: false
 };
 
 /**
@@ -431,7 +435,8 @@ Sticky.propTypes = {
     innerZ: PropTypes.oneOfType([
         PropTypes.string,
         PropTypes.number
-    ])
+    ]),
+    stickToBottom: PropTypes.bool
 };
 
 Sticky.STATUS_ORIGINAL = STATUS_ORIGINAL;
