@@ -323,7 +323,7 @@ class Sticky extends React.PureComponent {
             winHeight = win.innerHeight || docEl.clientHeight;
             M = window.Modernizr;
             // No Sticky on lower-end browser when no Modernizr
-            if (M) {
+            if (M && M.prefixed) {
                 canEnableTransforms = M.csstransforms3d;
                 TRANSFORM_PROP = M.prefixed('transform');
             }
@@ -360,13 +360,15 @@ class Sticky extends React.PureComponent {
 
     render () {
         // TODO, "overflow: auto" prevents collapse, need a good way to get children height
-        var innerStyle = (this.props.stickToBottom === false) ? {
+        var innerStyle = (this.props.stickToBottom) ? {
             position: this.state.status === STATUS_FIXED ? 'fixed' : 'relative',
-            top: this.state.status === STATUS_FIXED ? '0px' : '',
+            top: '',
+            bottom: this.state.status === STATUS_FIXED ? '0px' : '',
             zIndex: this.props.innerZ
         } : {
             position: this.state.status === STATUS_FIXED ? 'fixed' : 'relative',
-            bottom: this.state.status === STATUS_FIXED ? '0px' : '',
+            top: this.state.status === STATUS_FIXED ? '0px' : '',
+            bottom: '',
             zIndex: this.props.innerZ
         };
         var outerStyle = {};
